@@ -28,7 +28,7 @@ Gracy B. Kisia - BSc Data Science and Analytics
 |---|---|
 | Data cleaning | Removed sender_balance_after and receiver_balance_after (data leakage) and transaction_id (non-predictive) |
 | Feature engineering | One-hot encoded categoricals; engineered amount_to_balance_ratio, is_late_night, low_sender_balance |
-| Multicollinearity check | Variance Inflation Factor (VIF) — all 20 features below threshold of 10, none dropped |
+| Multicollinearity check | Variance Inflation Factor (VIF). All 20 features below threshold of 10 so none were dropped |
 | Train/test split | Temporal — months 1–9 train (90,165 rows), months 10–12 test (29,835 rows) |
 | Class imbalance | Cost-sensitive learning via class weighting  |
 | Models | The standard and cost-sensitive variants of Logistic Regression, Random Forest and XGBoost (6 models total) |
