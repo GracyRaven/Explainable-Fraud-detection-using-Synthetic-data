@@ -46,11 +46,11 @@ whether cost-sensitive weighting changes which features the model relies on.
 
 ## Current Status
 All three research objectives have been completed:
-- All six models trained and evaluated
-- SHAP analysis completed — amount_to_balance_ratio identified as top fraud predictor
+- All six models were trained and evaluated
+- SHAP analysis completed. The amount_to_balance_ratio feature was identified as top fraud predictor as shown in the python code given.
 - Spearman stability test confirmed: XGBoost ρ=0.9188, Random Forest ρ=0.9293
-- Threshold tuning completed — LR cost-sensitive exceeded standard after tuning
-- Currently finalising written report
+- Threshold tuning completed.The Logistic Regression cost-sensitive exceeded standard after tuning
+- Currently finalising the final written report
 
 ## Key Results
 
