@@ -54,11 +54,11 @@ Gracy B. Kisia - BSc Data Science and Analytics
 ### VIF Screening Results
 All 20 features passed — highest VIF was 3.73 (hour), well below the threshold of 10. No features were dropped.
 
-### SHAP Feature Importance — Top 10
+### SHAP Feature Importance — Top 10 features
 
 **XGBoost Cost-Sensitive:**
 
-| Rank | Feature | Mean |SHAP| | Interpretation |
+| Rank | Feature | Mean Absolute SHAP | Interpretation |
 |---|---|---|---|
 | 1 | amount_to_balance_ratio | 1.4328 | Accounts being drained — strongest fraud signal |
 | 2 | receiver_balance_before | 0.4387 | Receiver account pattern |
@@ -95,8 +95,8 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 ## Key Findings
 
 1. **Best model:** Random Forest Standard achieved the highest F2 score (0.7043) with zero false positives
-2. **Top fraud predictor:** amount_to_balance_ratio — an engineered feature — was the single most important predictor in both models (SHAP value 1.43 for XGBoost)
-3. **SHAP stability confirmed:** Spearman ρ of 0.9188 and 0.9293 — both well above 0.80 — proving cost-sensitive learning and model interpretability are compatible
+2. **Top fraud predictor:** amount_to_balance_ratio,an engineered feature was the single most important predictor in both models (SHAP value 1.43 for XGBoost)
+3. **SHAP stability confirmed:** Spearman ρ of 0.9188 and 0.9293. Both Random Forest and XG boost were well above 0.80, proving cost-sensitive learning and model interpretability are compatible
 4. **Threshold matters:** Cost-sensitive models require threshold calibration beyond the default 0.5 cutoff to demonstrate their full benefit
 
 ## Hypotheses Summary
