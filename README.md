@@ -15,11 +15,11 @@ Gracy B. Kisia - BSc Data Science and Analytics
 | Months covered | 12 months (January–December 2026) |
 | Fraud rate | ~2.92% (3,504 fraudulent transactions) |
 | Missing values | None |
-| Location | mpesa_synthetic.csv  |
+| Location | mpesa_synthetic.csv |
 
 ## Research Objectives
-1. Comparing standard vs. cost-sensitive machine learning models for M-Pesa fraud detection using F2-score and AUC-PR evaluation metrics
-2. Using SHAP to identify which transaction features drive fraud predictions
+1. Compare standard vs. cost-sensitive machine learning models for M-Pesa fraud detection using F2-score and AUC-PR evaluation metrics
+2. Use SHAP to identify which transaction features drive fraud predictions
 3. Formally test whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation (stability threshold: ρ ≥ 0.80)
 
 ## Methodology
@@ -30,7 +30,7 @@ Gracy B. Kisia - BSc Data Science and Analytics
 | Feature engineering | One-hot encoded categoricals; engineered amount_to_balance_ratio, is_late_night, low_sender_balance |
 | Multicollinearity check | Variance Inflation Factor (VIF). All 20 features below threshold of 10 so none were dropped |
 | Train/test split | Temporal. Months 1–9 were used for training (90,165 rows), months 10–12 were used for testing (29,835 rows) |
-| Class imbalance | Cost-sensitive learning via class weighting  |
+| Class imbalance | Cost-sensitive learning via class weighting |
 | Models | The standard and cost-sensitive variants of Logistic Regression, Random Forest and XGBoost (6 models total) |
 | Explainability | SHAP TreeExplainer on same sampled rows for fair comparison |
 | Stability test | Spearman rank correlation between standard and cost-sensitive SHAP feature rankings |
@@ -60,7 +60,7 @@ All 20 features passed. The highest VIF was 3.73 (hour), well below the threshol
 
 | Rank | Feature | Mean Absolute SHAP | Interpretation |
 |---|---|---|---|
-| 1 | amount_to_balance_ratio | 1.4328 | Accounts being drained — strongest fraud signal |
+| 1 | amount_to_balance_ratio | 1.4328 | Accounts being drained - strongest fraud signal |
 | 2 | receiver_balance_before | 0.4387 | Receiver account pattern |
 | 3 | amount | 0.3738 | Raw transaction size |
 | 4 | sender_balance_before | 0.3650 | Sender financial position |
@@ -95,8 +95,8 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 ## Key Findings
 
 1. **Best model:** Random Forest Standard achieved the highest F2 score (0.7043) with zero false positives
-2. **Top fraud predictor:** amount_to_balance_ratio,an engineered feature was the single most important predictor in both models (SHAP value 1.43 for XGBoost)
-3. **SHAP stability confirmed:** Spearman ρ of 0.9188 and 0.9293. Both Random Forest and XG boost were well above 0.80, proving cost-sensitive learning and model interpretability are compatible
+2. **Top fraud predictor:** amount_to_balance_ratio, an engineered feature, was the single most important predictor in both models (SHAP value 1.43 for XGBoost)
+3. **SHAP stability confirmed:** Spearman ρ of 0.9188 and 0.9293. Both Random Forest and XGBoost were well above 0.80, proving cost-sensitive learning and model interpretability are compatible
 4. **Threshold matters:** Cost-sensitive models require threshold calibration beyond the default 0.5 cutoff to demonstrate their full benefit
 
 ## Hypotheses Summary
@@ -108,7 +108,7 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 ✅ Confirmed. The engineered feature amount_to_balance_ratio was the dominant predictor in both models, consistent with known M-Pesa fraud patterns where accounts are drained in a single transaction. Both RF and XGBoost models agreed on the same top five features.
 
 **H3 — SHAP rankings stable under cost-sensitive weighting**
-✅ Confirmed. Spearman rank correlation was 0.9188 for XGBoost and 0.9293 for Random Forest . These are both well above the 0.80 stability threshold with p-values below 0.0001, confirming that cost-sensitive weighting does not distort SHAP feature importance rankings.
+✅ Confirmed. Spearman rank correlation was 0.9188 for XGBoost and 0.9293 for Random Forest. These are both well above the 0.80 stability threshold with p-values below 0.0001, confirming that cost-sensitive weighting does not distort SHAP feature importance rankings.
 
 ## Current Status
 - ✅ Data pipeline complete
@@ -119,6 +119,15 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 - ✅ All outputs saved
 - 📝 Currently finalising written report
 
+## How to Run
+```bash
+git clone https://github.com/yourusername/mpesa-fraud-detection-shap.git
+cd mpesa-fraud-detection-shap
+pip install -r requirements.txt
+jupyter notebook PROJECT_IMPLEMENTATION.ipynb
+```
+**Note:** Update the CSV file path in Cell 06 to match the location of mpesa_synthetic.csv on your machine.
+
 ## Project Structure
 
 ```
@@ -127,7 +136,7 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 ├── .gitignore
 ├── PROJECT_IMPLEMENTATION.ipynb
 ├── mpesa_synthetic.csv
-├── mpesa_synthetic_data after feature engineering.csv
+├── mpesa_data_after_feature_engineering.csv
 ├── outputs/
 │   ├── full_results.csv
 │   ├── spearman_results.csv
@@ -144,5 +153,3 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 └── docs/
     └── progress.md
 ```
-
-
