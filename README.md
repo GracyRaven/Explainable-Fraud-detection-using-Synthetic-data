@@ -5,10 +5,7 @@ M-Pesa mobile money fraud more effectively than standard models, while keeping
 SHAP-based explanations stable and trustworthy enough for real-world regulatory use.
 
 ## Author
-Gracy Betty Mwelu Kisia (669175)
-BSc Data Science and Analytics
-United States International University — Africa
-Supervisor: Dr. Verrah A. Otiende
+Gracy Betty Kisia - BSc Data Science and Analytics
 
 ## Dataset
 - **Name:** Synthetic M-Pesa Transaction Dataset
