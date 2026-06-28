@@ -46,10 +46,10 @@ whether cost-sensitive weighting changes which features the model relies on.
 
 ## Current Status
 All three research objectives have been completed:
-- All six models were trained and evaluated
-- SHAP analysis completed. The amount_to_balance_ratio feature was identified as top fraud predictor as shown in the python code given.
-- Spearman stability test confirmed: XGBoost ρ=0.9188, Random Forest ρ=0.9293
-- Threshold tuning completed.The Logistic Regression cost-sensitive exceeded standard after tuning
+- All six models were trained and evaluated.
+- SHAP analysis was completed. The amount_to_balance_ratio feature was identified as top fraud predictor.This is shown in the outputs folder provided.
+- Spearman stability test was confirmed as strong for both models, with XGBoost showing ρ = 0.9188 and Random Forest showing ρ = 0.9293, indicating highly consistent and stable performance rankings across runs.
+- Threshold tuning  was also completed.The Logistic Regression cost-sensitive model exceeded its standard version after threshold tuning.
 - Currently finalising the final written report
 
 ## Key Results
@@ -63,7 +63,9 @@ All three research objectives have been completed:
 | XGB Standard | 0.7022 | 0.6866 |
 | XGB Cost-Sensitive | 0.6578 | 0.6879 |
 
-**Best model:** Random Forest Standard (F2 = 0.7043, zero false positives). This will be shown through the python code given.
+**Best model:** Random Forest Standard (F2 = 0.7043, zero false positives).
+
+
 
 **SHAP Stability (Spearman ρ):**
 - XGBoost: 0.9188 ✅ Stable
