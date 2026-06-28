@@ -29,7 +29,7 @@ Gracy B. Kisia - BSc Data Science and Analytics
 | Data cleaning | Removed sender_balance_after and receiver_balance_after (data leakage) and transaction_id (non-predictive) |
 | Feature engineering | One-hot encoded categoricals; engineered amount_to_balance_ratio, is_late_night, low_sender_balance |
 | Multicollinearity check | Variance Inflation Factor (VIF). All 20 features below threshold of 10 so none were dropped |
-| Train/test split | Temporal — months 1–9 train (90,165 rows), months 10–12 test (29,835 rows) |
+| Train/test split | Temporal. Months 1–9 were used for training (90,165 rows), months 10–12 were used for testing (29,835 rows) |
 | Class imbalance | Cost-sensitive learning via class weighting  |
 | Models | The standard and cost-sensitive variants of Logistic Regression, Random Forest and XGBoost (6 models total) |
 | Explainability | SHAP TreeExplainer on same sampled rows for fair comparison |
@@ -49,12 +49,12 @@ Gracy B. Kisia - BSc Data Science and Analytics
 | XGB Standard | 0.7022 | 0.6866 | 564 | **0** | 299 | 28972 | 65.4% |
 | XGB Cost-Sensitive | 0.6578 | 0.6879 | 572 | 324 | 291 | 28648 | 66.3% |
 
-**Best model: Random Forest Standard — F2 = 0.7043, zero false positives**
+**Best model: Random Forest Standard since the F2-score = 0.7043, zero false positives**
 
-### VIF Screening Results
-All 20 features passed — highest VIF was 3.73 (hour), well below the threshold of 10. No features were dropped.
+### Variance Inflation Factor Screening Results
+All 20 features passed. The highest VIF was 3.73 (hour), well below the threshold of 10 so no features were dropped.
 
-### SHAP Feature Importance — Top 10 features
+### SHAP Feature Importance: Top 10 features
 
 **XGBoost Cost-Sensitive:**
 
@@ -101,11 +101,14 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 
 ## Hypotheses Summary
 
-| Hypothesis | Status | Evidence |
-|---|---|---|
-| H1: Cost-sensitive models outperform standard | ⚠️ Partially confirmed | Standard won at default threshold; cost-sensitive matched/exceeded after tuning |
-| H2: SHAP identifies meaningful fraud features | ✅ Confirmed | amount_to_balance_ratio dominant in both models |
-| H3: SHAP rankings stable under cost-sensitive weighting | ✅ Confirmed | ρ = 0.9188 and 0.9293, both above 0.80 |
+**H1 — Cost-sensitive models outperform standard models**
+⚠️ Partially confirmed. At the default 0.5 threshold, standard models performed better or equal in two out of three comparisons. Once thresholds were tuned, Logistic Regression cost-sensitive exceeded its standard counterpart (F2: 0.6925 vs 0.6755), while Random Forest and XGBoost cost-sensitive matched standard performance.
+
+**H2 — SHAP identifies meaningful fraud features**
+✅ Confirmed. The engineered feature amount_to_balance_ratio was the dominant predictor in both models, consistent with known M-Pesa fraud patterns where accounts are drained in a single transaction. Both RF and XGBoost models agreed on the same top five features.
+
+**H3 — SHAP rankings stable under cost-sensitive weighting**
+✅ Confirmed. Spearman rank correlation was 0.9188 for XGBoost and 0.9293 for Random Forest . These are both well above the 0.80 stability threshold with p-values below 0.0001, confirming that cost-sensitive weighting does not distort SHAP feature importance rankings.
 
 ## Current Status
 - ✅ Data pipeline complete
@@ -124,7 +127,7 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 ├── .gitignore
 ├── PROJECT_IMPLEMENTATION.ipynb
 ├── mpesa_synthetic.csv
-├── mpesa_engineered.csv
+├── mpesa_synthetic_data after feature engineering.csv
 ├── outputs/
 │   ├── full_results.csv
 │   ├── spearman_results.csv
