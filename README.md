@@ -1,14 +1,10 @@
-# Explainable Fraud Detection for M-Pesa Using Cost-Sensitive Machine Learning and SHAP
+# Explainable Fraud Detection for M-Pesa Using Machine Learning and SHAP
 
 ## Project Description
-This project develops an explainable fraud detection system for Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions with a 2.92% fraud rate, the study compares standard and cost-sensitive machine learning models — Logistic Regression, Random Forest, and XGBoost — and uses SHAP (SHapley Additive exPlanations) to identify which transaction features drive fraud predictions. A key contribution is formally testing whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation — a question not previously addressed in the M-Pesa fraud detection literature.
+This project develops an explainable fraud detection system for Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions with a 2.92% fraud rate, the study compares standard and cost-sensitive machine learning models of Logistic Regression, Random Forest, and XGBoost and uses SHAP (SHapley Additive exPlanations) to identify which transaction features drive fraud predictions. A key contribution is formally testing whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation — a question not previously addressed in the M-Pesa fraud detection literature.
 
 ## Author
-**Name:** Gracy Betty Mwelu Kisia
-**Student ID:** 669175
-**Programme:** BSc Data Science and Analytics
-**Institution:** United States International University — Africa
-**Supervisor:** Dr. Verrah A. Otiende
+Gracy B. Kisia - BSc Data Science and Analytics
 
 ## Dataset
 | Detail | Value |
@@ -19,11 +15,11 @@ This project develops an explainable fraud detection system for Kenya's M-Pesa m
 | Months covered | 12 months (January–December 2026) |
 | Fraud rate | 2.92% (3,504 fraudulent transactions) |
 | Missing values | None |
-| Location | mpesa_synthetic.csv |
+| Location | mpesa_synthetic.csv (https://www.kaggle.com/datasets/calebboen/mpesa-transactions-fraud/data) |
 
 ## Research Objectives
-1. Compare standard vs. cost-sensitive machine learning models for M-Pesa fraud detection using F2-score and AUC-PR
-2. Use SHAP to identify which transaction features drive fraud predictions
+1. Comparing standard vs. cost-sensitive machine learning models for M-Pesa fraud detection using F2-score and AUC-PR evaluation metrics
+2. Using SHAP to identify which transaction features drive fraud predictions
 3. Formally test whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation (stability threshold: ρ ≥ 0.80)
 
 ## Methodology
@@ -90,11 +86,11 @@ Both values exceed the 0.80 stability threshold. Cost-sensitive weighting does N
 
 | Model | Default F2 | Tuned Threshold | Tuned F2 | Improvement |
 |---|---|---|---|---|
-| LR Cost-Sensitive | 0.5902 | 0.893 | 0.6925 | +0.1023 |
-| RF Cost-Sensitive | 0.7043 | 0.660 | 0.7043 | +0.0000 |
+| Logistic Regression Cost-Sensitive | 0.5902 | 0.893 | 0.6925 | +0.1023 |
+| Random Forest Cost-Sensitive | 0.7043 | 0.660 | 0.7043 | +0.0000 |
 | XGB Cost-Sensitive | 0.6578 | 0.790 | 0.7028 | +0.0450 |
 
-After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and XGB cost-sensitive matched standard performance.
+After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and XGB cost-sensitive matched standard model performance.
 
 ## Key Findings
 
@@ -146,22 +142,4 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
     └── progress.md
 ```
 
-## How to Run
 
-```bash
-git clone https://github.com/yourusername/mpesa-fraud-detection-shap.git
-cd mpesa-fraud-detection-shap
-pip install -r requirements.txt
-jupyter notebook PROJECT_IMPLEMENTATION.ipynb
-```
-
-**Note:** Update the CSV file path in Cell 06 to match the location of mpesa_synthetic.csv on your machine.
-
-## Requirements
-See requirements.txt for full list. Key packages:
-- numpy==2.0.0
-- pandas==2.2.3
-- scikit-learn==1.5.2
-- xgboost==2.1.1
-- shap==0.46.0
-- scipy, matplotlib, seaborn, statsmodels, pyarrow==17.0.0
