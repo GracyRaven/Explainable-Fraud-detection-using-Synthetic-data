@@ -10,12 +10,12 @@ Gracy B. Kisia - BSc Data Science and Analytics
 | Detail | Value |
 |---|---|
 | Name | Synthetic M-Pesa Transaction Dataset |
-| Source | Kaggle |
+| Source | Kaggle (https://www.kaggle.com/datasets/calebboen/mpesa-transactions-fraud/data) |
 | Size | 120,000 transactions × 13 columns |
 | Months covered | 12 months (January–December 2026) |
-| Fraud rate | 2.92% (3,504 fraudulent transactions) |
+| Fraud rate | ~2.92% (3,504 fraudulent transactions) |
 | Missing values | None |
-| Location | mpesa_synthetic.csv (https://www.kaggle.com/datasets/calebboen/mpesa-transactions-fraud/data) |
+| Location | mpesa_synthetic.csv  |
 
 ## Research Objectives
 1. Comparing standard vs. cost-sensitive machine learning models for M-Pesa fraud detection using F2-score and AUC-PR evaluation metrics
@@ -30,8 +30,8 @@ Gracy B. Kisia - BSc Data Science and Analytics
 | Feature engineering | One-hot encoded categoricals; engineered amount_to_balance_ratio, is_late_night, low_sender_balance |
 | Multicollinearity check | Variance Inflation Factor (VIF) — all 20 features below threshold of 10, none dropped |
 | Train/test split | Temporal — months 1–9 train (90,165 rows), months 10–12 test (29,835 rows) |
-| Class imbalance | Cost-sensitive learning via class weighting — not SMOTE |
-| Models | Logistic Regression, Random Forest, XGBoost — standard and cost-sensitive variants (6 models total) |
+| Class imbalance | Cost-sensitive learning via class weighting  |
+| Models | The standard and cost-sensitive variants of Logistic Regression, Random Forest and XGBoost (6 models total) |
 | Explainability | SHAP TreeExplainer on same sampled rows for fair comparison |
 | Stability test | Spearman rank correlation between standard and cost-sensitive SHAP feature rankings |
 | Threshold tuning | Precision-recall curve used to find optimal F2 threshold for each cost-sensitive model |
