@@ -121,8 +121,8 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 
 ## How to Run
 ```bash
-git clone https://github.com/yourusername/mpesa-fraud-detection-shap.git
-cd mpesa-fraud-detection-shap
+git clone https://github.com/GracyRaven/Explainable-Fraud-detection-using-Synthetic-data.git
+cd Explainable-Fraud-detection-using-Synthetic-data
 pip install -r requirements.txt
 jupyter notebook PROJECT_IMPLEMENTATION.ipynb
 ```
