@@ -1,7 +1,7 @@
 # Explainable Fraud Detection for M-Pesa Using Machine Learning and SHAP
 
 ## Project Description
-This project develops an explainable fraud detection system for Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions with a 2.92% fraud rate, the study compares standard and cost-sensitive machine learning models of Logistic Regression, Random Forest, and XGBoost and uses SHAP (SHapley Additive exPlanations) to identify which transaction features drive fraud predictions. A key contribution is formally testing whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation — a question not previously addressed in the M-Pesa fraud detection literature.
+This project develops an explainable fraud detection system for Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions with a 2.92% fraud rate, the study compares standard and cost-sensitive machine learning models of Logistic Regression, Random Forest, and XGBoost and uses SHAP (SHapley Additive exPlanations) to identify which transaction features drive fraud predictions. A key contribution is formally testing whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation.
 
 ## Author
 Gracy B. Kisia - BSc Data Science and Analytics
