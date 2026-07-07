@@ -60,16 +60,16 @@ All 20 features passed. The highest VIF was 3.73 (hour), well below the threshol
 
 | Rank | Feature | Mean Absolute SHAP | Interpretation |
 |---|---|---|---|
-| 1 | amount_to_balance_ratio | 1.4328 | Accounts being drained - strongest fraud signal |
-| 2 | receiver_balance_before | 0.4387 | Receiver account pattern |
-| 3 | amount | 0.3738 | Raw transaction size |
-| 4 | sender_balance_before | 0.3650 | Sender financial position |
-| 5 | hour | 0.2681 | Time of day |
-| 6 | device_type_smartphone | 0.0891 | Device used |
-| 7 | region_Kisumu | 0.0592 | Geographic signal |
-| 8 | day_of_week_Sat | 0.0585 | Weekend pattern |
-| 9 | day_of_week_Sun | 0.0564 | Weekend pattern |
-| 10 | transaction_type_peer | 0.0561 | Peer-to-peer transfers |
+| 1 | amount_to_balance_ratio | 1.4571 | Accounts being drained - strongest fraud signal |
+| 2 | receiver_balance_before | 0.4386 | Receiver account pattern |
+| 3 | amount | 0.3676 | Raw transaction size |
+| 4 | sender_balance_before | 0.3659 | Sender financial position |
+| 5 | hour | 0.2653 | Time of day |
+| 6 | device_type_smartphone | 0.0888 | Device used |
+| 7 | day_of_week_Sat | 0.0622 | Weekend pattern |
+| 8 | region_Kisumu | 0.0584 | Geographic signal |
+| 9 | day_of_week_Sun | 0.0574 | Weekend pattern |
+| 10 | transaction_type_peer | 0.0565 | Peer-to-peer transfers |
 
 Both models independently agreed on the same top 5 features. The engineered feature amount_to_balance_ratio outperformed all raw dataset features in both models.
 
@@ -94,10 +94,10 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 
 ## Key Findings
 
-1. **Best model:** Random Forest Standard achieved the highest F2 score (0.7043) with zero false positives
-2. **Top fraud predictor:** amount_to_balance_ratio, an engineered feature, was the single most important predictor in both models (SHAP value 1.43 for XGBoost)
+1. **Best model:** Random Forest Standard achieved the highest F2 score (0.7043) while producing zero false positives.
+2. **Top fraud predictor:** amount_to_balance_ratio, an engineered feature, was the single most important predictor in both models (SHAP value 1.46 for XGBoost)
 3. **SHAP stability confirmed:** Spearman ρ of 0.9188 and 0.9293. Both Random Forest and XGBoost were well above 0.80, proving cost-sensitive learning and model interpretability are compatible
-4. **Threshold matters:** Cost-sensitive models require threshold calibration beyond the default 0.5 cutoff to demonstrate their full benefit
+4. **Threshold matters:** After threshold tuning, Logistic Regression cost-sensitive outperformed its standard counterpart, Random Forest cost-sensitive matched the standard model, and XGBoost cost-sensitive slightly exceeded the standard model.
 
 ## Hypotheses Summary
 
@@ -134,9 +134,10 @@ jupyter notebook PROJECT_IMPLEMENTATION.ipynb
 ├── README.md
 ├── requirements.txt
 ├── .gitignore
-├── PROJECT_IMPLEMENTATION.ipynb
-├── mpesa_synthetic.csv
-├── mpesa_data_after_feature_engineering.csv
+├── PROJECT IMPLEMENTATION.ipynb
+├── Data/mpesa_synthetic.csv
+│   ├── mpesa_synthetic.csv
+│   ├── mpesa_syntetic_data_after feature engineering.csv
 ├── outputs/
 │   ├── full_results.csv
 │   ├── spearman_results.csv
