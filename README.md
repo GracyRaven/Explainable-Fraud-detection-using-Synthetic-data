@@ -60,16 +60,31 @@ All 20 features passed. The highest VIF was 3.73 (hour), well below the threshol
 
 | Rank | Feature | Mean Absolute SHAP | Interpretation |
 |---|---|---|---|
-| 1 | amount_to_balance_ratio | 1.4571 | Accounts being drained - strongest fraud signal |
+| 1 | amount_to_balance_ratio | 1.4571 | Strongest fraud indicator showing transactions that drain the sender's account |
 | 2 | receiver_balance_before | 0.4386 | Receiver account pattern |
 | 3 | amount | 0.3676 | Raw transaction size |
 | 4 | sender_balance_before | 0.3659 | Sender financial position |
 | 5 | hour | 0.2653 | Time of day |
 | 6 | device_type_smartphone | 0.0888 | Device used |
 | 7 | day_of_week_Sat | 0.0622 | Weekend pattern |
-| 8 | region_Kisumu | 0.0584 | Geographic signal |
+| 8 | region_Kisumu | 0.0584 | Geographic location |
 | 9 | day_of_week_Sun | 0.0574 | Weekend pattern |
 | 10 | transaction_type_peer | 0.0565 | Peer-to-peer transfers |
+
+**Random Forest Cost-Sensitive**
+
+| Rank | Feature | Mean Absolute SHAP | Interpretation |
+|---|---|---:|---|
+| 1 | amount_to_balance_ratio | 0.2485 | Strongest fraud indicator showing transactions that drain the sender's account |
+| 2 | sender_balance_before | 0.0934 | Fraud is influenced by the sender's available balance before the transaction |
+| 3 | amount | 0.0514 | Larger transaction amounts contribute more strongly to fraud predictions |
+| 4 | receiver_balance_before | 0.0357 | Receiver account balance provides additional fraud context |
+| 5 | hour | 0.0195 | Time of day |
+| 6 | low_sender_balance | 0.0077 | Engineered feature indicating financially vulnerable accounts |
+| 7 | device_type_smartphone | 0.0044 | Device used |
+| 8 | transaction_type_till | 0.0042 | Till payments |
+| 9 | transaction_type_peer | 0.0038 | Peer-to-peer transfers |
+| 10 | region_Kisumu | 0.0031 | Geographic location |
 
 Both models independently agreed on the same top 5 features. The engineered feature amount_to_balance_ratio outperformed all raw dataset features in both models.
 
@@ -77,8 +92,8 @@ Both models independently agreed on the same top 5 features. The engineered feat
 
 | Model | Spearman ρ | p-value | Decision |
 |---|---|---|---|
-| XGBoost | 0.9188 | < 0.0001 | Stable ✅ |
-| Random Forest | 0.9293 | < 0.0001 | Stable ✅ |
+| XGBoost | 0.9098 | < 0.0001 | Stable ✅ |
+| Random Forest | 0.9534 | < 0.0001 | Stable ✅ |
 
 Both values exceed the 0.80 stability threshold. Cost-sensitive weighting does NOT distort SHAP feature importance rankings.
 
