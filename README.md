@@ -33,7 +33,7 @@ Gracy B. Kisia - BSc Data Science and Analytics
 | Class imbalance | Cost-sensitive learning via class weighting |
 | Models | The standard and cost-sensitive variants of Logistic Regression, Random Forest and XGBoost (6 models total) |
 | Explainability | SHAP TreeExplainer on same sampled rows for fair comparison |
-| Stability test | Spearman rank correlation between standard and cost-sensitive SHAP feature rankings |
+| Stability test | Spearman rank correlation |
 | Threshold tuning | Precision-recall curve used to find optimal F2 threshold for each cost-sensitive model |
 
 ## Results
