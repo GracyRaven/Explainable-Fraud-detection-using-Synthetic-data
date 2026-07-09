@@ -116,13 +116,13 @@ After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and X
 
 ## Hypotheses Summary
 
-**H1 — Cost-sensitive models outperform standard models**
+**H1 - Cost-sensitive models outperform standard models**
 ⚠️ Partially confirmed. At the default 0.5 threshold, standard models performed better or equal in two out of three comparisons. Once thresholds were tuned, Logistic Regression cost-sensitive exceeded its standard counterpart (F2: 0.6925 vs 0.6755), while Random Forest and XGBoost cost-sensitive matched standard performance.
 
-**H2 — SHAP identifies meaningful fraud features**
+**H2 - SHAP identifies meaningful fraud features**
 ✅ Confirmed. The engineered feature amount_to_balance_ratio was the dominant predictor in both models, consistent with known M-Pesa fraud patterns where accounts are drained in a single transaction. Both RF and XGBoost models agreed on the same top five features.
 
-**H3 — SHAP rankings stable under cost-sensitive weighting**
+**H3 - SHAP rankings stable under cost-sensitive weighting**
 ✅ Confirmed. Spearman rank correlation was 0.9188 for XGBoost and 0.9293 for Random Forest. These are both well above the 0.80 stability threshold with p-values below 0.0001, confirming that cost-sensitive weighting does not distort SHAP feature importance rankings.
 
 ## Current Status
