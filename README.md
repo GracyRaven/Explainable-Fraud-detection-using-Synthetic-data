@@ -150,7 +150,7 @@ jupyter notebook PROJECT_IMPLEMENTATION.ipynb
 ├── requirements.txt
 ├── .gitignore
 ├── PROJECT IMPLEMENTATION.ipynb
-├── Data/mpesa_synthetic.csv
+├── Data/
 │   ├── mpesa_synthetic.csv
 │   ├── mpesa_syntetic_data_after feature engineering.csv
 ├── outputs/
@@ -158,9 +158,10 @@ jupyter notebook PROJECT_IMPLEMENTATION.ipynb
 │   ├── spearman_results.csv
 │   ├── shap_importance_comparison.csv
 │   ├── threshold_tuning_results.csv
-│   ├── shap_xgb_summary.png
-│   ├── shap_rf_summary.png
-│   ├── shap_xgb_bar.png
+│   ├── shap_xgb_cost_summary.png
+│   ├── shap_rf_cost_summary.png
+│   ├── shap_rf_cost_bar.png
+│   ├── shap_xgb_cost_bar.png
 │   ├── spearman_comparison.png
 │   ├── confusion_matrices_all.png
 │   ├── f2_comparison.png
