@@ -21,9 +21,13 @@ This project explores explainable machine learning for fraud detection in Kenya'
 
 ## Methodology
 
-Leakage columns (`sender_balance_after`, `receiver_balance_after`, `transaction_id`) were removed, categoricals one-hot encoded, and three features engineered (`amount_to_balance_ratio`, `is_late_night`, `low_sender_balance`). 
-All 20 features passed VIF screening (max VIF = 3.73, threshold = 10). 
-A temporal split (months 1–9 train / 10–12 test) was used to avoid data leakage, and six models: standard and cost-sensitive versions of Logistic Regression, Random Forest, and XGBoost were trained and explained using SHAP TreeExplainer on matched sample rows, with a Spearman rank-correlation stability check and F2-optimal threshold tuning.
+Leakage-related columns (`sender_balance_after`, `receiver_balance_after`, and `transaction_id`) were removed to prevent the models from learning information that would not be available during real-world fraud detection. 
+
+Categorical variables were transformed using one-hot encoding, and three new features were engineered: `amount_to_balance_ratio`, `is_late_night`, and `low_sender_balance`. All 20 features were evaluated for multicollinearity using Variance Inflation Factor (VIF), with the highest VIF recorded at 3.73, below the threshold of 10. 
+
+A temporal data split was applied, using months 1–9 for training and months 10–12 for testing, to simulate real-world deployment and reduce data leakage risks. Six models, consisting of standard and cost-sensitive versions of Logistic Regression, Random Forest and XGBoost were trained and interpreted using SHAP TreeExplainer. 
+
+SHAP explanations were compared using matched sample rows, with Spearman rank correlation used to assess the stability of feature importance rankings. Finally, F2-score threshold tuning was applied to optimize model performance, with greater emphasis placed on correctly identifying fraudulent transactions.
 
 
 ## Project Structure
