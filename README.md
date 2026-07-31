@@ -2,7 +2,7 @@
 
 **Author:** Gracy Kisia - BSc Data Science and Analytics
 
-An explainable fraud detection system for Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions (2.92% fraud rate), the project compares standard vs. cost-sensitive Logistic Regression, Random Forest, and XGBoost models, and uses SHAP to identify which transaction features drive fraud predictions. A key contribution is formally testing through Spearman rank correlation,whether cost-sensitive weighting distorts SHAP feature importance rankings.
+This project explores explainable machine learning for fraud detection in Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions with a fraud rate of 2.92%, it compares standard and cost-sensitive versions of Logistic Regression, Random Forest, and XGBoost to evaluate their effectiveness in detecting fraudulent transactions. Beyond predictive performance, the project focuses on model interpretability by using SHAP to explain which transaction features have the greatest influence on fraud predictions. It also investigates whether applying cost-sensitive learning changes these explanations by comparing SHAP feature importance rankings using Spearman rank correlation. The goal is to develop a fraud detection approach that is not only accurate but also transparent and trustworthy, making it easier to understand the reasoning behind model predictions.
 
 ## Dataset
 
@@ -25,6 +25,20 @@ Leakage columns (`sender_balance_after`, `receiver_balance_after`, `transaction_
 All 20 features passed VIF screening (max VIF = 3.73, threshold = 10). 
 A temporal split (months 1–9 train / 10–12 test) was used to avoid data leakage, and six models: standard and cost-sensitive versions of Logistic Regression, Random Forest, and XGBoost were trained and explained using SHAP TreeExplainer on matched sample rows, with a Spearman rank-correlation stability check and F2-optimal threshold tuning.
 
+
+## Project Structure
+
+```text
+Explainable-Fraud-detection-using-Synthetic-data/
+├── Data/
+├── docs/
+├── outputs/
+├── PROJECT IMPLEMENTATION.ipynb
+├── requirements.txt
+├── .gitignore
+└── README.md
+```
+
 ## How to Run
 
 ```bash
@@ -33,4 +47,4 @@ cd Explainable-Fraud-detection-using-Synthetic-data
 pip install -r requirements.txt
 jupyter notebook PROJECT_IMPLEMENTATION.ipynb
 ```
-Update the CSV path in Cell 06 to point to `mpesa_synthetic.csv` on your machine.
+N.B: Update the CSV path in Cell 06 to point to `mpesa_synthetic.csv` on your machine.
