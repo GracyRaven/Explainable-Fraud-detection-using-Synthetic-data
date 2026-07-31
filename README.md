@@ -21,7 +21,7 @@ An explainable fraud detection system for Kenya's M-Pesa mobile money platform. 
 
 ## Methodology
 
-Leakage columns (`sender_balance_after`, `receiver_balance_after`, `transaction_id`) were removed, categoricals one-hot encoded, and three features engineered (`amount_to_balance_ratio`, `is_late_night`, `low_sender_balance`). All 20 features passed VIF screening (max VIF = 3.73, threshold = 10). A temporal split (months 1–9 train / 10–12 test) was used to avoid data leakage, and six models — standard and cost-sensitive versions of Logistic Regression, Random Forest, and XGBoost — were trained and explained using SHAP TreeExplainer on matched sample rows, with a Spearman rank-correlation stability check and F2-optimal threshold tuning.
+Leakage columns (`sender_balance_after`, `receiver_balance_after`, `transaction_id`) were removed, categoricals one-hot encoded, and three features engineered (`amount_to_balance_ratio`, `is_late_night`, `low_sender_balance`). All 20 features passed VIF screening (max VIF = 3.73, threshold = 10). A temporal split (months 1–9 train / 10–12 test) was used to avoid data leakage, and six models: standard and cost-sensitive versions of Logistic Regression, Random Forest, and XGBoost were trained and explained using SHAP TreeExplainer on matched sample rows, with a Spearman rank-correlation stability check and F2-optimal threshold tuning.
 
 ## Results
 
@@ -38,7 +38,7 @@ Leakage columns (`sender_balance_after`, `receiver_balance_after`, `transaction_
 
 **Top SHAP predictors** (both models agree): `amount_to_balance_ratio` > `receiver_balance_before`/`sender_balance_before` > `amount` > `hour`. The engineered `amount_to_balance_ratio` feature outperformed every raw feature in both models.
 
-**SHAP stability:** Spearman ρ = 0.9188 (XGBoost) and 0.9293 (Random Forest), both well above the 0.80 threshold (p < 0.0001) — cost-sensitive weighting does not distort SHAP rankings.
+**SHAP stability:** Spearman ρ = 0.9188 (XGBoost) and 0.9293 (Random Forest), both well above the 0.80 threshold (p < 0.0001). This means that cost-sensitive weighting does not distort SHAP rankings.
 
 **Threshold tuning:** After tuning, cost-sensitive Logistic Regression improved from F2 = 0.5902 to 0.6925, exceeding its standard counterpart; Random Forest and XGBoost cost-sensitive matched their standard versions.
 
