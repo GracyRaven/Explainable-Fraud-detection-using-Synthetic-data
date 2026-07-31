@@ -1,172 +1,61 @@
 # Explainable Fraud Detection for M-Pesa Using Machine Learning and SHAP
 
-## Project Description
-This project develops an explainable fraud detection system for Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions with a 2.92% fraud rate, the study compares standard and cost-sensitive machine learning models of Logistic Regression, Random Forest, and XGBoost and uses SHAP (SHapley Additive exPlanations) to identify which transaction features drive fraud predictions. A key contribution is formally testing whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation.
+**Author:** Gracy Kisia — BSc Data Science and Analytics
 
-## Author
-Gracy B. Kisia - BSc Data Science and Analytics
+An explainable fraud detection system for Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions (2.92% fraud rate), the project compares standard vs. cost-sensitive Logistic Regression, Random Forest, and XGBoost models, and uses SHAP to identify which transaction features drive fraud predictions. A key contribution is formally testing through Spearman rank correlation,whether cost-sensitive weighting distorts SHAP feature importance rankings.
 
 ## Dataset
+
 | Detail | Value |
 |---|---|
-| Name | Synthetic M-Pesa Transaction Dataset |
-| Source | Kaggle (https://www.kaggle.com/datasets/calebboen/mpesa-transactions-fraud/data) |
-| Size | 120,000 transactions × 13 columns |
-| Months covered | 12 months (January–December 2026) |
+| Source | [Kaggle: M-Pesa Transactions Fraud] (https://www.kaggle.com/datasets/calebboen/mpesa-transactions-fraud/data) |
+| Size | 120,000 transactions × 13 columns, Jan–Dec 2026 |
 | Fraud rate | ~2.92% (3,504 fraudulent transactions) |
 | Missing values | None |
-| Location | mpesa_synthetic.csv |
 
-## Research Objectives
-1. Compare standard vs. cost-sensitive machine learning models for M-Pesa fraud detection using F2-score and AUC-PR evaluation metrics
-2. Use SHAP to identify which transaction features drive fraud predictions
-3. Formally test whether cost-sensitive weighting distorts SHAP feature importance rankings using Spearman rank correlation (stability threshold: ρ ≥ 0.80)
+## Objectives
+
+1. Compare standard vs. cost-sensitive models using F2-score and AUC-PR as evaluation metrics
+2. Use SHAP to identify the transaction features that drive fraud predictions
+3. Test whether cost-sensitive weighting distorts SHAP rankings (Spearman ρ ≥ 0.80 = stable)
 
 ## Methodology
 
-| Step | Detail |
-|---|---|
-| Data cleaning | Removed sender_balance_after and receiver_balance_after (data leakage) and transaction_id (non-predictive) |
-| Feature engineering | One-hot encoded categoricals; engineered amount_to_balance_ratio, is_late_night, low_sender_balance |
-| Multicollinearity check | Variance Inflation Factor (VIF). All 20 features below threshold of 10 so none were dropped |
-| Train/test split | Temporal. Months 1–9 were used for training (90,165 rows), months 10–12 were used for testing (29,835 rows) |
-| Class imbalance | Cost-sensitive learning via class weighting |
-| Models | The standard and cost-sensitive variants of Logistic Regression, Random Forest and XGBoost (6 models total) |
-| Explainability | SHAP TreeExplainer on same sampled rows for fair comparison |
-| Stability test | Spearman rank correlation |
-| Threshold tuning | Precision-recall curve used to find optimal F2 threshold for each cost-sensitive model |
+Leakage columns (`sender_balance_after`, `receiver_balance_after`, `transaction_id`) were removed, categoricals one-hot encoded, and three features engineered (`amount_to_balance_ratio`, `is_late_night`, `low_sender_balance`). All 20 features passed VIF screening (max VIF = 3.73, threshold = 10). A temporal split (months 1–9 train / 10–12 test) was used to avoid data leakage, and six models — standard and cost-sensitive versions of Logistic Regression, Random Forest, and XGBoost — were trained and explained using SHAP TreeExplainer on matched sample rows, with a Spearman rank-correlation stability check and F2-optimal threshold tuning.
 
 ## Results
 
-### Model Performance (Default 0.5 Threshold)
-
-| Model | F2 Score | AUC-PR | TP | FP | FN | TN | Fraud Caught |
-|---|---|---|---|---|---|---|---|
-| LR Standard | 0.6755 | 0.6857 | 540 | 5 | 323 | 28967 | 62.6% |
-| LR Cost-Sensitive | 0.5902 | 0.6849 | 576 | 852 | 287 | 28120 | 66.7% |
-| RF Standard | **0.7043** | 0.6796 | 566 | **0** | 297 | 28972 | 65.6% |
-| RF Cost-Sensitive | **0.7043** | 0.6818 | 566 | **0** | 297 | 28972 | 65.6% |
-| XGB Standard | 0.7022 | 0.6866 | 564 | **0** | 299 | 28972 | 65.4% |
-| XGB Cost-Sensitive | 0.6578 | 0.6879 | 572 | 324 | 291 | 28648 | 66.3% |
-
-**Best model: Random Forest Standard since the F2-score = 0.7043, zero false positives**
-
-### Variance Inflation Factor Screening Results
-All 20 features passed. The highest VIF was 3.73 (hour), well below the threshold of 10 so no features were dropped.
-
-### SHAP Feature Importance: Top 10 features
-
-**XGBoost Cost-Sensitive:**
-
-| Rank | Feature | Mean Absolute SHAP | Interpretation |
-|---|---|---|---|
-| 1 | amount_to_balance_ratio | 1.4571 | Strongest fraud indicator showing transactions that drain the sender's account |
-| 2 | receiver_balance_before | 0.4386 | Receiver account pattern |
-| 3 | amount | 0.3676 | Raw transaction size |
-| 4 | sender_balance_before | 0.3659 | Sender financial position |
-| 5 | hour | 0.2653 | Time of day |
-| 6 | device_type_smartphone | 0.0888 | Device used |
-| 7 | day_of_week_Sat | 0.0622 | Weekend pattern |
-| 8 | region_Kisumu | 0.0584 | Geographic location |
-| 9 | day_of_week_Sun | 0.0574 | Weekend pattern |
-| 10 | transaction_type_peer | 0.0565 | Peer-to-peer transfers |
-
-**Random Forest Cost-Sensitive**
-
-| Rank | Feature | Mean Absolute SHAP | Interpretation |
-|---|---|---:|---|
-| 1 | amount_to_balance_ratio | 0.2485 | Strongest fraud indicator showing transactions that drain the sender's account |
-| 2 | sender_balance_before | 0.0934 | Fraud is influenced by the sender's available balance before the transaction |
-| 3 | amount | 0.0514 | Larger transaction amounts contribute more strongly to fraud predictions |
-| 4 | receiver_balance_before | 0.0357 | Receiver account balance provides additional fraud context |
-| 5 | hour | 0.0195 | Time of day |
-| 6 | low_sender_balance | 0.0077 | Engineered feature indicating financially vulnerable accounts |
-| 7 | device_type_smartphone | 0.0044 | Device used |
-| 8 | transaction_type_till | 0.0042 | Till payments |
-| 9 | transaction_type_peer | 0.0038 | Peer-to-peer transfers |
-| 10 | region_Kisumu | 0.0031 | Geographic location |
-
-Both models independently agreed on the same top 5 features. The engineered feature amount_to_balance_ratio outperformed all raw dataset features in both models.
-
-### Spearman Stability Test
-
-| Model | Spearman ρ | p-value | Decision |
-|---|---|---|---|
-| XGBoost | 0.9098 | < 0.0001 | Stable ✅ |
-| Random Forest | 0.9534 | < 0.0001 | Stable ✅ |
-
-Both values exceed the 0.80 stability threshold. Cost-sensitive weighting does NOT distort SHAP feature importance rankings.
-
-### Threshold Tuning Results
-
-| Model | Default F2 | Tuned Threshold | Tuned F2 | Improvement |
+| Model | F2 Score | AUC-PR | FP | Fraud Caught |
 |---|---|---|---|---|
-| Logistic Regression Cost-Sensitive | 0.5902 | 0.893 | 0.6925 | +0.1023 |
-| Random Forest Cost-Sensitive | 0.7043 | 0.660 | 0.7043 | +0.0000 |
-| XGB Cost-Sensitive | 0.6578 | 0.790 | 0.7028 | +0.0450 |
+| LR Standard | 0.6755 | 0.6857 | 5 | 62.6% |
+| LR Cost-Sensitive | 0.5902 | 0.6849 | 852 | 66.7% |
+| **RF Standard** | **0.7043** | 0.6796 | **0** | 65.6% |
+| RF Cost-Sensitive | 0.7043 | 0.6818 | 0 | 65.6% |
+| XGB Standard | 0.7022 | 0.6866 | 0 | 65.4% |
+| XGB Cost-Sensitive | 0.6578 | 0.6879 | 324 | 66.3% |
 
-After tuning, LR cost-sensitive (0.6925) exceeded LR standard (0.6755). RF and XGB cost-sensitive matched standard model performance.
+**Best model:** Random Forest Standard (F2 = 0.7043, zero false positives).
+
+**Top SHAP predictors** (both models agree): `amount_to_balance_ratio` > `receiver_balance_before`/`sender_balance_before` > `amount` > `hour`. The engineered `amount_to_balance_ratio` feature outperformed every raw feature in both models.
+
+**SHAP stability:** Spearman ρ = 0.9188 (XGBoost) and 0.9293 (Random Forest), both well above the 0.80 threshold (p < 0.0001) — cost-sensitive weighting does not distort SHAP rankings.
+
+**Threshold tuning:** After tuning, cost-sensitive Logistic Regression improved from F2 = 0.5902 to 0.6925, exceeding its standard counterpart; Random Forest and XGBoost cost-sensitive matched their standard versions.
 
 ## Key Findings
 
-1. **Best model:** Random Forest Standard achieved the highest F2 score (0.7043) while producing zero false positives.
-2. **Top fraud predictor:** amount_to_balance_ratio, an engineered feature, was the single most important predictor in both models (SHAP value 1.46 for XGBoost)
-3. **SHAP stability confirmed:** Spearman ρ of 0.9188 and 0.9293. Both Random Forest and XGBoost were well above 0.80, proving cost-sensitive learning and model interpretability are compatible
-4. **Threshold matters:** After threshold tuning, Logistic Regression cost-sensitive outperformed its standard counterpart, Random Forest cost-sensitive matched the standard model, and XGBoost cost-sensitive slightly exceeded the standard model.
+- Random Forest Standard is the best-performing, most precise model (highest F2, zero false positives).
+- `amount_to_balance_ratio` is the single strongest fraud predictor in both tree-based models, confirming the value of feature engineering.
+- Cost-sensitive learning and interpretability are compatible: SHAP rankings remain stable (ρ > 0.80) after class weighting.
+- Threshold tuning — not class weighting alone — is what lets cost-sensitive models match or beat standard ones.
 
-## Hypotheses Summary
-
-**H1 - Cost-sensitive models outperform standard models**
-⚠️ Partially confirmed. At the default 0.5 threshold, standard models performed better or equal in two out of three comparisons. Once thresholds were tuned, Logistic Regression cost-sensitive exceeded its standard counterpart (F2: 0.6925 vs 0.6755), while Random Forest and XGBoost cost-sensitive matched standard performance.
-
-**H2 - SHAP identifies meaningful fraud features**
-✅ Confirmed. The engineered feature amount_to_balance_ratio was the dominant predictor in both models, consistent with known M-Pesa fraud patterns where accounts are drained in a single transaction. Both RF and XGBoost models agreed on the same top five features.
-
-**H3 - SHAP rankings stable under cost-sensitive weighting**
-✅ Confirmed. Spearman rank correlation was 0.9188 for XGBoost and 0.9293 for Random Forest. These are both well above the 0.80 stability threshold with p-values below 0.0001, confirming that cost-sensitive weighting does not distort SHAP feature importance rankings.
-
-## Current Status
-- ✅ Data pipeline complete
-- ✅ All six models trained and evaluated
-- ✅ SHAP analysis completed
-- ✅ Spearman stability test confirmed
-- ✅ Threshold tuning completed
-- ✅ All outputs saved
-- 📝 Currently finalising written report
 
 ## How to Run
+
 ```bash
 git clone https://github.com/GracyRaven/Explainable-Fraud-detection-using-Synthetic-data.git
 cd Explainable-Fraud-detection-using-Synthetic-data
 pip install -r requirements.txt
 jupyter notebook PROJECT_IMPLEMENTATION.ipynb
 ```
-**Note:** Update the CSV file path in Cell 06 to match the location of mpesa_synthetic.csv on your machine.
-
-## Project Structure
-
-```
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── PROJECT IMPLEMENTATION.ipynb
-├── Data/
-│   ├── mpesa_synthetic.csv
-│   ├── mpesa_syntetic_data_after feature engineering.csv
-├── outputs/
-│   ├── full_results.csv
-│   ├── spearman_results.csv
-│   ├── shap_importance_comparison.csv
-│   ├── threshold_tuning_results.csv
-│   ├── shap_xgb_cost_summary.png
-│   ├── shap_rf_cost_summary.png
-│   ├── shap_rf_cost_bar.png
-│   ├── shap_xgb_cost_bar.png
-│   ├── spearman_comparison.png
-│   ├── confusion_matrices_all.png
-│   ├── f2_comparison.png
-│   ├── f2_tuned_comparison.png
-│   └── threshold_tradeoff.png
-└── docs/
-    └── progress.md
-```
+Update the CSV path in Cell 06 to point to `mpesa_synthetic.csv` on your machine.
