@@ -1,0 +1,7 @@
+Model,Threshold,TP,FP,FN,TN,F2,Fraud_Caught
+LR Cost-Sensitive,Default (0.500),576,852,287,28120,0.5902,66.7%
+LR Cost-Sensitive,Tuned (0.893),562,50,301,28922,0.6914,65.1%
+RF Cost-Sensitive,Default (0.500),566,0,297,28972,0.7043,65.6%
+RF Cost-Sensitive,Tuned (0.660),566,0,297,28972,0.7043,65.6%
+XGB Cost-Sensitive,Default (0.500),572,324,291,28648,0.6578,66.3%
+XGB Cost-Sensitive,Tuned (0.790),566,9,297,28963,0.7028,65.6%
