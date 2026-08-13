@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraud Risk Console — M-Pesa Transaction Scoring</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#080b14;
+    --bg-grid: rgba(255,255,255,0.025);
+    --panel:#10162a;
+    --panel-2:#0c1122;
+    --border:#212a47;
+    --border-soft:#1a2138;
+    --text:#e9edf7;
+    --text-muted:#8592b4;
+    --text-faint:#4c5675;
+    --signal:#57e0c9;
+    --signal-dim: rgba(87,224,201,0.14);
+    --green:#3ddc97;
+    --amber:#f5b83d;
+    --red:#ff5c66;
+    --green-dim: rgba(61,220,151,0.13);
+    --amber-dim: rgba(245,184,61,0.13);
+    --red-dim: rgba(255,92,102,0.14);
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+
+  body{
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0 / 100% 28px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0 / 28px 100%,
+      radial-gradient(circle at 15% -10%, #101b33 0%, var(--bg) 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    padding: 28px 20px 60px;
+  }
+
+  .wrap{ max-width:1180px; margin:0 auto; }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    flex-wrap:wrap; gap:14px;
+    border-bottom:1px solid var(--border-soft);
+    padding-bottom:18px; margin-bottom:26px;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px;
+    background:linear-gradient(155deg, var(--signal), #2f9d8c);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-weight:700; color:#04140f; font-size:15px;
+    box-shadow:0 0 0 1px rgba(87,224,201,0.35), 0 8px 22px -8px rgba(87,224,201,0.55);
+  }
+  .brand-text h1{
+    margin:0; font-size:17px; letter-spacing:0.01em; font-weight:600;
+  }
+  .brand-text p{
+    margin:2px 0 0; font-family:var(--mono); font-size:11.5px; color:var(--text-muted);
+    letter-spacing:0.03em;
+  }
+  .status-chip{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11.5px; color:var(--text-muted);
+    background:var(--panel); border:1px solid var(--border);
+    padding:8px 12px; border-radius:100px;
+  }
+  .status-dot{
+    width:7px; height:7px; border-radius:50%; background:var(--signal);
+    box-shadow:0 0 0 3px var(--signal-dim);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1 } 50%{ opacity:0.45 } }
+
+  /* ---------- layout ---------- */
+  .grid{
+    display:grid; grid-template-columns: 380px 1fr; gap:20px;
+  }
+  @media (max-width: 860px){ .grid{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px;
+  }
+  .panel-title{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.12em;
+    color:var(--text-faint); text-transform:uppercase; margin:0 0 18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel-title::after{
+    content:''; flex:1; height:1px; background:var(--border-soft);
+  }
+
+  /* ---------- inputs ---------- */
+  .field{ margin-bottom:20px; }
+  .field label{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:13px; color:var(--text-muted); margin-bottom:9px;
+  }
+  .field label .val{
+    font-family:var(--mono); color:var(--text); font-size:13px; font-weight:600;
+  }
+  input[type=range]{
+    -webkit-appearance:none; width:100%; height:4px; border-radius:3px;
+    background:var(--border-soft); outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+    background:var(--signal); cursor:pointer; border:3px solid #04140f;
+    box-shadow:0 0 0 1px var(--signal);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%;
+    background:var(--signal); cursor:pointer; border:3px solid #04140f;
+  }
+  .hint{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); margin-top:6px; }
+
+  .seg{
+    display:flex; gap:6px; flex-wrap:wrap;
+  }
+  .seg button{
+    flex:1; min-width:64px;
+    background:var(--panel-2); border:1px solid var(--border);
+    color:var(--text-muted); font-family:var(--mono); font-size:11.5px;
+    padding:8px 6px; border-radius:8px; cursor:pointer;
+    transition:all .15s ease;
+  }
+  .seg button.active{
+    background:var(--signal-dim); border-color:var(--signal); color:var(--signal);
+  }
+  .seg button:hover:not(.active){ border-color:var(--text-faint); color:var(--text); }
+
+  .presets{ display:flex; flex-direction:column; gap:8px; margin-top:22px; }
+  .presets-label{
+    font-size:11px; color:var(--text-faint); font-family:var(--mono);
+    letter-spacing:.08em; text-transform:uppercase; margin-bottom:2px;
+  }
+  .preset-btn{
+    display:flex; align-items:center; gap:10px;
+    background:var(--panel-2); border:1px solid var(--border);
+    border-radius:9px; padding:10px 12px; cursor:pointer; text-align:left;
+    color:var(--text); font-family:var(--sans); font-size:12.5px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .preset-btn:hover{ border-color:var(--text-faint); }
+  .preset-dot{ width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
+  .preset-btn .sub{ color:var(--text-muted); font-size:11px; margin-left:auto; font-family:var(--mono); }
+
+  /* ---------- gauge ---------- */
+  .gauge-row{
+    display:flex; gap:26px; align-items:center; flex-wrap:wrap;
+  }
+  .gauge-wrap{ position:relative; width:220px; height:140px; flex:0 0 auto; }
+  .gauge-readout{
+    position:absolute; left:0; right:0; bottom:6px; text-align:center;
+  }
+  .gauge-score{
+    font-family:var(--mono); font-size:34px; font-weight:700; line-height:1;
+  }
+  .gauge-label{
+    font-family:var(--mono); font-size:10.5px; color:var(--text-faint);
+    letter-spacing:.1em; text-transform:uppercase; margin-top:4px;
+  }
+
+  .decision-block{ flex:1; min-width:230px; }
+  .decision-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 14px; border-radius:9px; font-family:var(--mono);
+    font-size:13px; font-weight:600; letter-spacing:.02em; margin-bottom:10px;
+  }
+  .decision-desc{ font-size:13px; color:var(--text-muted); line-height:1.55; max-width:46ch; }
+
+  /* ---------- shap bars ---------- */
+  .shap-list{ margin-top:22px; display:flex; flex-direction:column; gap:14px; }
+  .shap-row{ display:grid; grid-template-columns: 168px 1fr 56px; align-items:center; gap:12px; }
+  .shap-name{ font-family:var(--mono); font-size:11.5px; color:var(--text-muted); }
+  .shap-track{
+    height:9px; background:var(--panel-2); border:1px solid var(--border-soft);
+    border-radius:5px; overflow:hidden;
+  }
+  .shap-fill{
+    height:100%; border-radius:5px 0 0 5px;
+    transition: width .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .shap-val{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-align:right; }
+
+  .explain{
+    margin-top:22px; padding:14px 16px; border-radius:10px;
+    background:var(--panel-2); border:1px solid var(--border-soft);
+    font-size:13px; line-height:1.6; color:var(--text);
+  }
+  .explain b{ color:var(--signal); font-weight:600; }
+
+  footer{
+    margin-top:26px; font-family:var(--mono); font-size:10.5px; color:var(--text-faint);
+    line-height:1.7; border-top:1px solid var(--border-soft); padding-top:16px;
+  }
+  footer b{ color:var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="brand-mark">λ</div>
+      <div class="brand-text">
+        <h1>Fraud Risk Console</h1>
+        <p>COST-SENSITIVE RANDOM FOREST &middot; SHAP-EXPLAINED &middot; SIMULATION</p>
+      </div>
+    </div>
+    <div class="status-chip"><span class="status-dot"></span> scoring engine live</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- INPUT PANEL -->
+    <div class="panel">
+      <p class="panel-title">Transaction input</p>
+
+      <div class="field">
+        <label>Amount sent <span class="val" id="amountVal">KES 8,000</span></label>
+        <input type="range" id="amount" min="50" max="150000" step="50" value="8000">
+        <div class="hint">KES 50 — 150,000</div>
+      </div>
+
+      <div class="field">
+        <label>Sender balance before <span class="val" id="senderVal">KES 12,000</span></label>
+        <input type="range" id="sender" min="0" max="60000" step="50" value="12000">
+        <div class="hint">low_sender_balance flag triggers below KES 500</div>
+      </div>
+
+      <div class="field">
+        <label>Receiver balance before <span class="val" id="receiverVal">KES 15,000</span></label>
+        <input type="range" id="receiver" min="0" max="60000" step="50" value="15000">
+      </div>
+
+      <div class="field">
+        <label>Hour of day <span class="val" id="hourVal">14:00</span></label>
+        <input type="range" id="hour" min="0" max="23" step="1" value="14">
+        <div class="hint">is_late_night flag: 22:00 – 05:00</div>
+      </div>
+
+      <div class="field">
+        <label style="margin-bottom:10px">Transaction type</label>
+        <div class="seg" id="typeSeg">
+          <button data-type="Send Money" class="active">Send</button>
+          <button data-type="Pay Bill">Pay Bill</button>
+          <button data-type="Withdraw">Withdraw</button>
+          <button data-type="Buy Airtime">Airtime</button>
+        </div>
+      </div>
+
+      <div class="presets">
+        <div class="presets-label">Sample cases</div>
+        <button class="preset-btn" data-preset="legit">
+          <span class="preset-dot" style="background:var(--green)"></span>
+          Routine daytime transfer
+          <span class="sub">low risk</span>
+        </button>
+        <button class="preset-btn" data-preset="borderline">
+          <span class="preset-dot" style="background:var(--amber)"></span>
+          Large evening withdrawal
+          <span class="sub">watch</span>
+        </button>
+        <button class="preset-btn" data-preset="fraud">
+          <span class="preset-dot" style="background:var(--red)"></span>
+          Balance-draining 2am transfer
+          <span class="sub">high risk</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div class="panel">
+      <p class="panel-title">Model output</p>
+
+      <div class="gauge-row">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 220 140" width="220" height="140">
+            <!-- tick marks -->
+            <g id="ticks"></g>
+            <!-- track -->
+            <path d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="#1a2138" stroke-width="10" stroke-linecap="round"/>
+            <!-- progress arc -->
+            <path id="arcFill" d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="#3ddc97" stroke-width="10" stroke-linecap="round"/>
+            <!-- needle -->
+            <g id="needle" style="transform-origin: 110px 120px;">
+              <line x1="110" y1="120" x2="110" y2="42" stroke="#e9edf7" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="110" cy="120" r="5.5" fill="#e9edf7"/>
+            </g>
+          </svg>
+          <div class="gauge-readout">
+            <div class="gauge-score" id="scoreText">00</div>
+            <div class="gauge-label">risk score / 100</div>
+          </div>
+        </div>
+
+        <div class="decision-block">
+          <div class="decision-badge" id="decisionBadge">PASS THROUGH</div>
+          <div class="decision-desc" id="decisionDesc">
+            Score below the step-up threshold. Transaction proceeds without additional friction.
+          </div>
+        </div>
+      </div>
+
+      <div class="shap-list" id="shapList"></div>
+
+      <div class="explain" id="explainText"></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <b>How this works —</b> risk score is a weighted combination of five inputs, using the relative
+    <b>mean |SHAP|</b> weights the study reported for the cost-sensitive Random Forest model
+    (Table 4.3): amount_to_balance_ratio (55%), sender_balance_before (21%), amount (11%),
+    receiver_balance_before (8%), hour / is_late_night (4%). Decision tiers follow the pass /
+    step-up / hold framework proposed in Chapter 5.6. This console is an illustrative simulation
+    built from the study's published feature-importance figures — it does not call the trained
+    model file and should not be used for real transaction decisions.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const amountEl = $('amount'), senderEl = $('sender'), receiverEl = $('receiver'), hourEl = $('hour');
+  const amountVal = $('amountVal'), senderVal = $('senderVal'), receiverVal = $('receiverVal'), hourVal = $('hourVal');
+  const typeSeg = $('typeSeg');
+  let txnType = 'Send Money';
+
+  const WEIGHTS = { ratio: 0.554, sender: 0.208, amount: 0.114, receiver: 0.080, hour: 0.044 };
+  const FEATURES = [
+    { key:'ratio',    name:'amount_to_balance_ratio' },
+    { key:'sender',   name:'sender_balance_before' },
+    { key:'amount',   name:'amount' },
+    { key:'receiver', name:'receiver_balance_before' },
+    { key:'hour',     name:'hour (late-night)' },
+  ];
+
+  function fmtKES(n){ return 'KES ' + Math.round(n).toLocaleString('en-KE'); }
+  function fmtHour(h){ return String(h).padStart(2,'0') + ':00'; }
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+
+  function computeRisks(){
+    const amount = +amountEl.value, sender = +senderEl.value, receiver = +receiverEl.value, hour = +hourEl.value;
+    const isLateNight = (hour >= 22 || hour <= 5);
+    const ratio = amount / Math.max(sender, 1);
+
+    const risks = {
+      ratio:    clamp01(ratio / 2),
+      sender:   clamp01(1 - sender / 3000),
+      amount:   clamp01(amount / 100000),
+      receiver: clamp01(1 - receiver / 3000),
+      hour:     isLateNight ? 1 : 0.10,
+    };
+    return { risks, isLateNight, ratio, amount, sender, receiver, hour };
+  }
+
+  function buildTicks(){
+    const g = $('ticks');
+    const cx=110, cy=120, r1=76, r2=84;
+    let html = '';
+    for(let i=0;i<=10;i++){
+      const angle = Math.PI - (i/10)*Math.PI;
+      const x1 = cx + r1*Math.cos(angle), y1 = cy - r1*Math.sin(angle);
+      const x2 = cx + r2*Math.cos(angle), y2 = cy - r2*Math.sin(angle);
+      html += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#2a3355" stroke-width="2"/>`;
+    }
+    g.innerHTML = html;
+  }
+  buildTicks();
+
+  const arcFill = $('arcFill');
+  const arcLen = arcFill.getTotalLength();
+  arcFill.style.strokeDasharray = arcLen;
+
+  function render(){
+    const { risks, isLateNight, ratio } = computeRisks();
+
+    amountVal.textContent = fmtKES(amountEl.value);
+    senderVal.textContent = fmtKES(senderEl.value);
+    receiverVal.textContent = fmtKES(receiverEl.value);
+    hourVal.textContent = fmtHour(hourEl.value);
+
+    let score = 0;
+    const contributions = FEATURES.map(f => {
+      const contribution = WEIGHTS[f.key] * risks[f.key];
+      score += contribution;
+      return { ...f, raw: risks[f.key], contribution };
+    });
+    score = Math.round(score * 100);
+
+    // gauge
+    const pct = score/100;
+    arcFill.style.strokeDashoffset = arcLen * (1-pct);
+    let color = 'var(--green)';
+    if(score >= 70) color = 'var(--red)'; else if(score >= 35) color = 'var(--amber)';
+    arcFill.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue(
+      score>=70 ? '--red' : score>=35 ? '--amber' : '--green'
+    ));
+    $('needle').style.transform = `rotate(${(pct*180-90).toFixed(1)}deg)`;
+    $('scoreText').textContent = String(score).padStart(2,'0');
+    $('scoreText').style.color = arcFill.getAttribute('stroke');
+
+    // decision
+    const badge = $('decisionBadge'), desc = $('decisionDesc');
+    if(score >= 70){
+      badge.textContent = 'HOLD FOR VERIFICATION';
+      badge.style.background = 'var(--red-dim)'; badge.style.color = 'var(--red)'; badge.style.border='1px solid var(--red)';
+      desc.textContent = 'High-confidence risk. Transaction is held and routed to a fraud analyst with its explanation before any account action.';
+    } else if(score >= 35){
+      badge.textContent = 'STEP-UP AUTHENTICATION';
+      badge.style.background = 'var(--amber-dim)'; badge.style.color = 'var(--amber)'; badge.style.border='1px solid var(--amber)';
+      desc.textContent = 'Medium risk. Sender is prompted for an SMS one-time password before the transaction is authorised.';
+    } else {
+      badge.textContent = 'PASS THROUGH';
+      badge.style.background = 'var(--green-dim)'; badge.style.color = 'var(--green)'; badge.style.border='1px solid var(--green)';
+      desc.textContent = 'Score below the step-up threshold. Transaction proceeds without additional friction.';
+    }
+
+    // shap bars — sorted by contribution, matching Table 4.3 ordering logic
+    const sorted = [...contributions].sort((a,b)=>b.contribution-a.contribution);
+    const maxContribution = Math.max(...contributions.map(c=>c.contribution), 0.001);
+    $('shapList').innerHTML = sorted.map(c => {
+      const widthPct = clamp01(c.contribution / maxContribution) * 100;
+      const barColor = c.key==='ratio' ? 'var(--signal)' : 'var(--text-faint)';
+      return `<div class="shap-row">
+        <div class="shap-name">${c.name}</div>
+        <div class="shap-track"><div class="shap-fill" style="width:${widthPct}%; background:${barColor}"></div></div>
+        <div class="shap-val">+${(c.contribution*100).toFixed(1)}</div>
+      </div>`;
+    }).join('');
+
+    // explanation
+    const top = sorted[0];
+    const ratioTxt = ratio.toFixed(2);
+    $('explainText').innerHTML = `This ${txnType.toLowerCase()} scored <b>${score}/100</b>, driven mainly by
+      <b>${top.name}</b>${top.key==='ratio' ? ` — the transaction uses <b>${(ratio*100).toFixed(0)}%</b> of the sender's balance (ratio ${ratioTxt})` : ''}${isLateNight ? ', combined with a late-night timestamp' : ''}.
+      This mirrors the study's finding that amount_to_balance_ratio was the dominant SHAP predictor across both tree-based models (Table 4.3).`;
+  }
+
+  [amountEl, senderEl, receiverEl, hourEl].forEach(el => el.addEventListener('input', render));
+
+  typeSeg.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    [...typeSeg.children].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    txnType = btn.dataset.type;
+    render();
+  });
+
+  const PRESETS = {
+    legit:      { amount: 2500,  sender: 18000, receiver: 22000, hour: 14 },
+    borderline: { amount: 25000, sender: 30000, receiver: 4000,  hour: 21 },
+    fraud:      { amount: 47000, sender: 48500, receiver: 200,   hour: 2  },
+  };
+  document.querySelectorAll('.preset-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const p = PRESETS[btn.dataset.preset];
+      amountEl.value = p.amount; senderEl.value = p.sender; receiverEl.value = p.receiver; hourEl.value = p.hour;
+      render();
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
