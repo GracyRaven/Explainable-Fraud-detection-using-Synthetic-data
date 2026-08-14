@@ -35,7 +35,7 @@ SHAP explanations were compared using matched sample rows, with Spearman rank co
 
 ## Project Summary
 
-This project demonstrated an explainable machine learning approach to fraud detection in M-Pesa transactions. By combining cost-sensitive learning, SHAP explanations, and Spearman rank correlation, the study evaluated both the predictive capability and interpretability of fraud detection models while considering the challenges associated with imbalanced transaction data.
+This project demonstrated an explainable machine learning approach to fraud detection in M-Pesa transactions. It combined cost-sensitive learning, SHAP explanations, and Spearman rank correlation to evaluate model performance and interpretability while addressing the imbalanced transaction data. A fraud_risk_console.html was also developed to provide a simple interface for viewing fraud-risk predictions and explanations.
 
 ## Project Structure
 
@@ -47,7 +47,8 @@ Explainable-Fraud-detection-using-Synthetic-data/
 ├── PROJECT IMPLEMENTATION.ipynb
 ├── requirements.txt
 ├── .gitignore
-└── README.md
+├── README.md
+├── fraud_risk_console.html
 ```
 
 ## How to Run
