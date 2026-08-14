@@ -4,7 +4,8 @@
 
 This project explored explainable machine learning for fraud detection in Kenya's M-Pesa mobile money platform. Using a synthetic dataset of 120,000 transactions with a fraud rate of 2.92%, it compared standard and cost-sensitive versions of Logistic Regression, Random Forest, and XGBoost models to evaluate their ability to detect fraudulent transactions. The project focused not only on predictive performance but also on model transparency by using SHAP to identify the key transaction features influencing fraud predictions. In addition, Spearman rank correlation was used to compare SHAP feature importance rankings between standard and cost-sensitive models, helping determine whether cost-sensitive learning changed the ordering of important features. The overall aim was to develop a fraud detection approach that balanced accuracy, interpretability, and reliability for mobile money fraud analysis.
 
-## Dataset
+
+## Dataset Details
 
 | Detail | Value |
 |---|---|
@@ -12,10 +13,8 @@ This project explored explainable machine learning for fraud detection in Kenya'
 | Size | 120,000 transactions × 13 columns, Jan–Dec 2026 |
 | Fraud rate | ~2.92% (3,504 fraudulent transactions) |
 | Missing values | None |
+| License | CC0 1.0 Universal (Public Domain). This permits unrestricted use, modification, and distribution without requiring permission or attribution. |
 
-## Dataset License
-
-The dataset is dedicated to the public domain under the CC0 1.0 Universal (CC0 1.0) license, permitting unrestricted use, modification, and distribution without requiring permission or attribution.
 
 ## Objectives
 
